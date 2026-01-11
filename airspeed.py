@@ -4,6 +4,8 @@ from skfuzzy import control as ctrl
 import sys
 
 def run_fuzzy_logic(current_speed_error, current_altitude):
+
+
         # Define Universes (Antecedents & Consequents)
         # -100 (Too Fast) to 100 (Too Slow) knots
         speed_err = ctrl.Antecedent(np.arange(-100, 101, 1), 'speed_error')
@@ -47,6 +49,8 @@ def run_fuzzy_logic(current_speed_error, current_altitude):
 
 
 
+
+
 def run_knapsack_optimization(weights_in, values_in, capacity, num_particles=30, iterations=100):
         weights = np.array(weights_in)
         values = np.array(values_in)
@@ -65,8 +69,9 @@ def run_knapsack_optimization(weights_in, values_in, capacity, num_particles=30,
         def _fitness(binary_position):
                 total_weight = np.sum(binary_position * weights)
                 if total_weight > capacity:
-                return 0 # Penalty: Invalid solution
+                        return 0 # Penalty: Invalid solution
                 return np.sum(binary_position * values)
+
 
         # Initialize particles (random 0s and 1s)
         particles = np.random.randint(2, size=(n_particles, n_items))
@@ -119,74 +124,74 @@ def get_valid_input(prompt, type_func):
                 except ValueError:
                         print(f"Invalid input. Please enter a valid {type_func.__name__}.")
 
+
 ####### MAIN ########
 def main():
         print("    MACHINE LEARNING ASSIGNMENT: FUZZY & SWARM SYSTEM    ")
         print("1. Run Fuzzy Logic Airplane Controller")
         print("2. Run Swarm Intelligence Knapsack Solver")
         print("3. Exit")
-        
         choice = input("\nEnter choice (1-3): ")
 
         if choice == '1':
                 print("\n--- Part A: Fuzzy Controller ---")
         
-        try:
-                # Taking user input for demonstration
-                speed_input = get_valid_input("Enter Speed Error (-100 to 100): ", float)
-                alt_input = get_valid_input("Enter Altitude (0 to 40000): ", float)
-                
-                # Call the function directly
-                result = run_fuzzy_logic(speed_input, alt_input)
-                
-                print("-" * 30)
-                print(f"Inputs -> Speed Err: {speed_input} | Altitude: {alt_input}")
-                print(f"Fuzzy Output -> Throttle Adjustment: {result:.2f}%")
-                print("-" * 30)
-                if result > 0:
-                        print("Action: PUSH THROTTLE")
-                elif result < 0:
-                        print("Action: REDUCE THROTTLE")
-                else:
-                        print("Action: MAINTAIN")
+                try:
+                        # Taking user input for demonstration
+                        speed_input = get_valid_input("Enter Speed Error (-100 to 100): ", float)
+                        alt_input = get_valid_input("Enter Altitude (0 to 40000): ", float)
+                        
+                        # Call the function directly
+                        result = run_fuzzy_logic(speed_input, alt_input)
+                        
+                        print("-" * 30)
+                        print(f"Inputs -> Speed Err: {speed_input} | Altitude: {alt_input}")
+                        print(f"Fuzzy Output -> Throttle Adjustment: {result:.2f}%")
+                        print("-" * 30)
+                        if result > 0:
+                                print("Action: PUSH THROTTLE")
+                        elif result < 0:
+                                print("Action: REDUCE THROTTLE")
+                        else:
+                                print("Action: MAINTAIN")
 
-        except Exception as e:
-                print(f"Error")
+                except Exception as e:
+                        print(f"Error")
 
         elif choice == '2':
                 print("\n--- Part B: Knapsack Swarm Optimization ---")
                 try:
-                # Collecting Problem Data
-                n = get_valid_input("How many items available? ", int)
-                
-                print(f"Enter {n} weights (space separated): ")
-                weights = list(map(float, input().strip().split()))
-                
-                print(f"Enter {n} values (space separated): ")
-                values = list(map(float, input().strip().split()))
-                
-                capacity = get_valid_input("Enter Knapsack Capacity: ", float)
+                        # Collecting Problem Data
+                        n = get_valid_input("How many items available? ", int)
+                        
+                        print(f"Enter {n} weights (space separated): ")
+                        weights = list(map(float, input().strip().split()))
+                        
+                        print(f"Enter {n} values (space separated): ")
+                        values = list(map(float, input().strip().split()))
+                        
+                        capacity = get_valid_input("Enter Knapsack Capacity: ", float)
 
-                # Validation
-                if len(weights) != n or len(values) != n:
-                        print("Error: The number of weights/values must match the number of items.")
-                        return
+                        # Validation
+                        if len(weights) != n or len(values) != n:
+                                print("Error: The number of weights/values must match the number of items.")
+                                return
 
-                # Execution 
-                best_config, best_val = run_knapsack_optimization(weights, values, capacity)
+                        # Execution 
+                        best_config, best_val = run_knapsack_optimization(weights, values, capacity)
 
-                print("\n" + "="*30)
-                print(f"OPTIMIZATION COMPLETE")
-                print("="*30)
-                print(f"Best Configuration (Binary): {best_config}")
-                print(f"Total Value: {best_val}")
-                print(f"Total Weight: {np.sum(best_config * np.array(weights))}/{capacity}")
-                
-                # Show which items were picked
-                print("\nItems Selected:")
-                for i, selected in enumerate(best_config):
-                        if selected == 1:
-                        print(f"- Item {i+1} (Weight: {weights[i]}, Value: {values[i]})")
+                        print("\n" + "="*30)
+                        print(f"OPTIMIZATION COMPLETE")
+                        print("="*30)
+                        print(f"Best Configuration (Binary): {best_config}")
+                        print(f"Total Value: {best_val}")
+                        print(f"Total Weight: {np.sum(best_config * np.array(weights))}/{capacity}")
+                        
+                        # Show which items were picked
+                        print("\nItems Selected:")
+                        for i, selected in enumerate(best_config):
+                                if selected == 1:
+                                        print(f"- Item {i+1} (Weight: {weights[i]}, Value: {values[i]})")
 
                 except Exception as e:
                         print(f"Error")
