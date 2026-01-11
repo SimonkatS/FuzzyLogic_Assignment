@@ -146,12 +146,10 @@ def main():
                         # Call the function directly
                         result = run_fuzzy_logic(speed_input, alt_input)
                         
-                        print("-" * 30)
                         print(f"Inputs -> Speed Err: {speed_input} | Altitude: {alt_input}")
                         print(f"Fuzzy Output -> Throttle Adjustment: {result:.2f}%")
-                        print("-" * 30)
                         if result > 0:
-                                print("Action: PUSH THROTTLE")
+                                print("\nAction: PUSH THROTTLE")
                         elif result < 0:
                                 print("Action: REDUCE THROTTLE")
                         else:
