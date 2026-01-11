@@ -18,15 +18,15 @@ class FuzzyPilot:
                 # -100% (Decelaration) to 100% (Acceleration)
                 throttle = ctrl.Consequent(np.arange(-100, 101, 1), 'throttle')
 
-                # 2. Define Membership Functions
-                # Speed Error 
-                speed_err['negative_large'] = fuzz.trapmf(speed_err.universe, [-100, -100, -50, -10])
-                speed_err['zero'] = fuzz.trimf(speed_err.universe, [-20, 0, 20])
-                speed_err['positive_large'] = fuzz.trapmf(speed_err.universe, [10, 50, 100, 100])
+                # Membership
+                speed_err['negative_large'] = fuzz.trapmf(speed_err.universe, [-100, -100, -50, -5])
+                speed_err['zero'] = fuzz.trimf(speed_err.universe, [-10, 0, 10])
+                speed_err['positive_large'] = fuzz.trapmf(speed_err.universe, [5, 50, 100, 100])
 
-                altitude['low'] = fuzz.sigmf(altitude.universe, 10000, -0.0005) # S-shape falling
-                altitude['high'] = fuzz.sigmf(altitude.universe, 20000, 0.0005) # S-shape rising
+                altitude['low'] = fuzz.sigmf(altitude.universe, 15000, -0.0005) # S-shape falling
+                altitude['high'] = fuzz.sigmf(altitude.universe, 15000, 0.0005) # S-shape rising
 
+                #throttle classes
                 throttle['strong_brake'] = fuzz.trimf(throttle.universe, [-100,-100,-60,])
                 throttle['brake'] = fuzz.trimf(throttle.universe, [-60, -30, 0])
                 throttle['maintain'] = fuzz.trimf(throttle.universe, [-10, 0, 10])
@@ -34,28 +34,18 @@ class FuzzyPilot:
                 throttle['maxboost'] = fuzz.trimf(throttle.universe, [60 , 100, 100])
 
 
-                # 3. Define Rules
+                # rules
                 rule1 = ctrl.Rule(speed_err['negative_large'] & altitude['low'], throttle['brake'])
                 rule2 = ctrl.Rule(speed_err['negative_large'] & altitude['high'], throttle['strong_brake'])
                 rule3 = ctrl.Rule(speed_err['zero'], throttle['maintain'])
                 rule4 = ctrl.Rule(speed_err['positive_large'] & altitude['low'], throttle['boost'])
                 rule5 = ctrl.Rule(speed_err['positive_large'] & altitude['high'], throttle['maxboost'])
 
-                # 4. Compile System
+                # Compile
                 control_system = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5])
                 return ctrl.ControlSystemSimulation(control_system) 
 
         def compute_throttle(self, current_speed_error: float, current_altitude: float) -> float:
-                """
-                Calculates the required throttle adjustment.
-                
-                Args:
-                        current_speed_error (float): Target Speed - Current Speed
-                        current_altitude (float): Current Altitude in feet
-                
-                Returns:
-                        float: Recommended throttle adjustment percentage (-100 to 100)
-                """
                 try:
                         self.simulation.input['speed_error'] = np.clip(current_speed_error, -100, 100)
                         self.simulation.input['altitude'] = np.clip(current_altitude, 0, 40000)
