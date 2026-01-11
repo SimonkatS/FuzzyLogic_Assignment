@@ -180,10 +180,7 @@ def main():
                         # Execution 
                         best_config, best_val = run_knapsack_optimization(weights, values, capacity)
 
-                        print("\n" + "="*30)
-                        print(f"OPTIMIZATION COMPLETE")
-                        print("="*30)
-                        print(f"Best Configuration (Binary): {best_config}")
+                        print(f"\n\nBest Configuration (Binary): {best_config}")
                         print(f"Total Value: {best_val}")
                         print(f"Total Weight: {np.sum(best_config * np.array(weights))}/{capacity}")
                         
