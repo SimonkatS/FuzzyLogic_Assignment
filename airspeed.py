@@ -50,5 +50,6 @@ class FuzzyPilot:
 
                 # 4. Compile System
                 control_system = ctrl.ControlSystem([rule1, rule2, rule3, rule4])
-                return ctrl.ControlSystemSimulation(control_system)
+                return ctrl.ControlSystemSimulation(control_system) 
+                
 
