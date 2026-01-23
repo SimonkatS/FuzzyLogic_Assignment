@@ -99,19 +99,19 @@ def run_knapsack_optimization(weights_in, values_in, capacity, num_particles=30,
                         velocities[i] = (w * velocities[i] +
                              c1 * r1 * (p_best_pos[i] - particles[i]) +
                              c2 * r2 * (g_best_pos - particles[i]))
+                        
+                        probs = _sigmoid(velocities[i])
+                        particles[i] = (np.random.rand(n_items) < probs).astype(int)
 
-                probs = _sigmoid(velocities[i])
-                particles[i] = (np.random.rand(n_items) < probs).astype(int)
+                        current_score = _fitness(particles[i])
 
-                current_score = _fitness(particles[i])
+                        if current_score > p_best_scores[i]:
+                                p_best_scores[i] = current_score
+                                p_best_pos[i] = particles[i].copy()
 
-                if current_score > p_best_scores[i]:
-                        p_best_scores[i] = current_score
-                        p_best_pos[i] = particles[i].copy()
-
-                if current_score > g_best_score:
-                        g_best_score = current_score
-                        g_best_pos = particles[i].copy()
+                        if current_score > g_best_score:
+                                g_best_score = current_score
+                                g_best_pos = particles[i].copy()
 
         if it % 20 == 0:
                 print(f"Iteration {it}/{iterations} | Current Best Value: {g_best_score}")
